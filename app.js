@@ -4,8 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
-var indexRouter = require("./routes/index");
-var api = require("./routes/api");
+var indexRouter = require("./routes");
 
 var app = express();
 var cors = require("cors");
@@ -19,11 +18,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "static")));
+app.use(express.static(path.join(__dirname, "static/images")));
+app.use(express.static(path.join(__dirname, "static/avatar")));
 app.use(cors());
 
-// *register rest api
-app.use("/", indexRouter);
-app.use("/api/auth", api);
+app.use("/api", indexRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
