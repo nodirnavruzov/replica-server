@@ -3,9 +3,7 @@ var router = express.Router()
 const bcrypt = require('bcryptjs')
 const config = require('../config/default.json')
 const jwt = require('jsonwebtoken')
-const configSQL = require('../config/sql.config')
 const DBRequests = require('../sql')
-const auth = require('../middleware/auth')
 const moment = require('moment')
 const HelperService = require('../utils/service')
 const { body, validationResult } = require('express-validator')
@@ -15,7 +13,7 @@ router.post('/register', body('email').isEmail(), body('password').isLength({ mi
   try {
     const dateNow = moment().format('DD-MM-YYYY HH:mm:ss')
     const { email, password } = req.body
-    const con = new DBRequests(configSQL)
+    const con = new DBRequests()
     const result = await con.checkUserEmail(email)
     if (!result.status) {
       return res.status(400).json({ errors: 'This e-mail is already registered' })
@@ -43,7 +41,7 @@ router.post('/login', body('email').isEmail(), body('password').isLength({ min: 
       return res.status(400).json({ errors: errors.array() })
     }
     const { email, password } = req.body
-    const con = new DBRequests(configSQL)
+    const con = new DBRequests()
     const gettedUser = await con.getUsersByEmail(email)
     const isMatch = await bcrypt.compare(password, gettedUser[0].password)
 

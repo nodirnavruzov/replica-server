@@ -1,11 +1,11 @@
-const configSQL = require("../config/sql.config");
-const DBRequests = require("../sql");
+// const connection = require('../sql/connect');
+const DBRequests = require('../sql')
+
 module.exports = async (posts, type) => {
-  let connection;
   let users;
   let arr = [];
   try {
-    connection = new DBRequests(configSQL);
+    const connection = new DBRequests()
     users = await connection.getUsers();
   } catch (error) {
     console.log(error);
@@ -23,7 +23,7 @@ module.exports = async (posts, type) => {
         }
       }
     }
-    
+
     return arr;
   } else if (type == "Object") {
     for (let i = 0; i < users.length; i++) {

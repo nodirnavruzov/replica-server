@@ -1,6 +1,5 @@
 var express = require('express')
 var router = express.Router()
-const configSQL = require('../config/sql.config')
 const DBRequests = require('../sql')
 const auth = require('../middleware/auth')
 const checkUser = require('../middleware/checkUser')
@@ -11,7 +10,7 @@ const service = new HelperService()
 
 router.post('/add-posts', auth, async (req, res) => {
   try {
-    const con = new DBRequests(configSQL)
+    const con = new DBRequests()
     const status = await con.addPost(req.body)
     const posts = await con.user_posts(req.body)
     await con.update_post_count(posts.length, req.body)
@@ -56,7 +55,7 @@ router.get('/all-news', async (req, res) => {
 
 router.get('/all-articles', async (req, res) => {
   try {
-    const con = new DBRequests(configSQL)
+    const con = new DBRequests()
     const row = await con.getAllArticles()
     for (let i = 0; i < row.length; i++) {
       let post = row[i]
@@ -79,7 +78,7 @@ router.get('/all-articles', async (req, res) => {
 
 router.get('/get-post/:id', async (req, res) => {
   try {
-    const con = new DBRequests(configSQL)
+    const con = new DBRequests()
     const row = await con.getPost(req.params.id)
     const post = await authorNameInfo(...row, 'Object')
     if (post[0].likes_count >= 0) {
@@ -95,7 +94,7 @@ router.get('/get-post/:id', async (req, res) => {
 
 router.get('/user-posts', async (req, res) => {
   try {
-    const con = new DBRequests(configSQL)
+    const con = new DBRequests()
     const row = await con.user_posts(req.query)
     const posts = await authorNameInfo(row, 'Array')
     res.json(posts)
@@ -106,7 +105,7 @@ router.get('/user-posts', async (req, res) => {
 
 router.get('/user-bookmark', async (req, res) => {
   try {
-    const con = new DBRequests(configSQL)
+    const con = new DBRequests()
     const row = await con.getSavedPosts(req.query)
     const posts = row.map(item => item[0])
     const savedPosts = await authorNameInfo(posts, 'Array')
@@ -118,7 +117,7 @@ router.get('/user-bookmark', async (req, res) => {
 
 router.post('/save-post', checkUser, async (req, res) => {
   try {
-    const con = new DBRequests(configSQL)
+    const con = new DBRequests()
     const row = await con.save_post(req.body)
     res.status(200).json(row)
   } catch (error) {
@@ -128,7 +127,7 @@ router.post('/save-post', checkUser, async (req, res) => {
 
 router.post('/check-saved-posts', async (req, res) => {
   try {
-    const con = new DBRequests(configSQL)
+    const con = new DBRequests()
     const [status] = await con.check_saved_posts(req.body)
     if (status) {
       res.status(200).json({ status: true })
@@ -143,7 +142,7 @@ router.post('/check-saved-posts', async (req, res) => {
 
 router.patch('/content-like', async (req, res) => {
   try {
-    const con = new DBRequests(configSQL)
+    const con = new DBRequests()
     const row = await con.content_like(req.body)
     res.status(200).json(row)
   } catch (error) {
@@ -152,7 +151,7 @@ router.patch('/content-like', async (req, res) => {
 })
 router.get('/get-content-likes-count', async (req, res) => {
   try {
-    const con = new DBRequests(configSQL)
+    const con = new DBRequests()
     const row = await con.get_content_likes_count(req.query)
 
     if (row[0].likes_count >= 0) {
@@ -168,7 +167,7 @@ router.get('/get-content-likes-count', async (req, res) => {
 })
 router.get('/get_user_likes', async (req, res) => {
   try {
-    const con = new DBRequests(configSQL)
+    const con = new DBRequests()
     const row = await con.get_user_likes(req.query)
     if (!row.length) {
       res.status(200).json({ row, status: null })

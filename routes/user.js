@@ -1,6 +1,5 @@
 var express = require('express')
 var router = express.Router()
-const configSQL = require('../config/sql.config')
 const DBRequests = require('../sql')
 const checkUser = require('../middleware/checkUser')
 const upload = require('../middleware/uploadAvatar')
@@ -9,7 +8,7 @@ const { body, validationResult } = require('express-validator')
 
 router.get('/get-user/:id', async (req, res) => {
   try {
-    const con = new DBRequests(configSQL)
+    const con = new DBRequests()
     const user = await con.user(req.params.id)
     delete user[0].password
     const x = { user_id: req.params.id }
@@ -30,7 +29,7 @@ router.get('/get-user/:id', async (req, res) => {
 })
 router.get('/upadated-user/:id', checkUser, async (req, res) => {
   try {
-    const con = new DBRequests(configSQL)
+    const con = new DBRequests()
     const user = await con.user(req.params.id)
     delete user[0].password
     res.json(user).status(200)
@@ -41,7 +40,7 @@ router.get('/upadated-user/:id', checkUser, async (req, res) => {
 
 router.post('/compare-password', async (req, res) => {
   try {
-    const con = new DBRequests(configSQL)
+    const con = new DBRequests()
     const password = await con.get_user_password(req.body.user_id)
     const isMatch = await bcrypt.compare(req.body.current_password, password[0].password)
     if (!isMatch) {
@@ -69,7 +68,7 @@ router.post('/upload-avatar', checkUser, upload.single('avatar'), async (req, re
 })
 router.delete('/remove-avatar', async (req, res) => {
   try {
-    const connection = new DBRequests(configSQL)
+    const connection = new DBRequests()
     const result = await connection.remove_avatar(req.query.id)
     res.status(200).json({ status: true, message: 'Avatar successfully deleted' })
   } catch (error) {
@@ -83,7 +82,7 @@ router.delete('/remove-avatar', async (req, res) => {
 router.post('/change-settings', checkUser, async (req, res) => {
   let response
   try {
-    const con = new DBRequests(configSQL)
+    const con = new DBRequests()
     const password = await con.get_user_password(req.body.userForm.id)
     const isMatch = await bcrypt.compare(req.body.userForm.current_password, password[0].password)
     if (isMatch) {
@@ -106,7 +105,7 @@ router.post('/change-settings', checkUser, async (req, res) => {
 router.post('/change-password', body('password').isLength({ min: 6 }), checkUser, async (req, res) => {
   let response
   try {
-    const con = new DBRequests(configSQL)
+    const con = new DBRequests()
     const password = await con.get_user_password(req.body.userForm.id)
     const isMatch = await bcrypt.compare(req.body.userForm.current_password, password[0].password)
     if (isMatch) {
@@ -115,7 +114,6 @@ router.post('/change-password', body('password').isLength({ min: 6 }), checkUser
         id: req.body.userForm.id,
         password: hashedPassword
       }
-      console.log(user)
       response = await con.change_password(user)
       res.status(200).json({ status: true, message: 'Password changed' })
     } else {
