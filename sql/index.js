@@ -146,7 +146,6 @@ module.exports = class DBRequests {
       let views = rows[0].views + 1
       rows[0].views = views
       await connection.execute(`UPDATE posts SET views=${views} WHERE id = '${id}'`)
-
       return rows
     } catch (error) {
       console.log(error)
@@ -228,7 +227,6 @@ module.exports = class DBRequests {
     }
   }
   async content_like(body) {
-    // variables
     let ex_result = null // result
 
     // initial parameters
@@ -269,6 +267,7 @@ module.exports = class DBRequests {
   }
 
   async get_content_likes_count(query) {
+    
     let likes
     try {
       ;[likes] = await connection.execute(`SELECT likes_count FROM posts WHERE id = ${query.post_id}`)
@@ -329,10 +328,31 @@ module.exports = class DBRequests {
   }
 
   async change_password(user_info) {
+    // const password = mysql.escape(user_info.password)
     try {
       const row = await connection.execute(
         `UPDATE users SET password='${user_info.password}' WHERE id='${user_info.id}'`
       )
+      return row
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  async set_reset_password(data) {
+    try {
+      let row = null
+      const [res] = await connection.execute(
+        `SELECT * FROM reset_password WHERE user_id='${data.id}'`
+      ) 
+      if (res.length) {
+        row = await connection.execute(
+          `UPDATE reset_password SET email='${data.email}', password='${data.password}', token='${data.token}', user_id='${data.id}'`
+        )
+      } else {
+        row = await connection.execute(
+          `INSERT INTO reset_password (email, password, token, user_id) VALUES ('${data.email}', '${data.password}', '${data.token}', '${data.id}')`
+        )
+      }
       return row
     } catch (error) {
       console.log(error)
