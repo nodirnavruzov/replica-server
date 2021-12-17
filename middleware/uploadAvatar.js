@@ -3,20 +3,15 @@ const moment = require("moment");
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    console.log(file);
-
     cb(null, "static/avatar");
   },
   filename(req, file, cb) {
-    console.log(file);
-
     const date = moment().format("DDMMYYYY-HHmmss_SSS");
     cb(null, `${file.fieldname}-${date}-${file.originalname}`);
   },
 });
 
 const fileFilter = (req, file, cb) => {
-  console.log(file);
   if (
     file.mimetype === "image/png" ||
     file.mimetype === "image/jpeg" ||

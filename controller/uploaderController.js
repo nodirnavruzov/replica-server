@@ -1,6 +1,4 @@
 module.exports.uploader = async (req, res) => {
-  console.log('req', req)
-  
   try {
     res.json({
       success: 1,

@@ -18,6 +18,7 @@ module.exports.getUser = async (req, res) => {
     } else {
       user[0].likes_count = { count, dec: true }
     }
+    
     res.json(user[0]).status(200)
   } catch (error) {
     res.status(500).json({ message: 'Something went wrong, please try again' })

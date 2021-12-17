@@ -10,7 +10,7 @@ module.exports = class DBRequests {
   async register(req) {
     try {
       await connection.execute(
-        `INSERT INTO users(name,surname, email, password, registration_date, avatar) VALUES ('${req.name}','${req.surname}', '${req.email}', '${req.password}', '${req.registration_date}', '')`
+        `INSERT INTO users(firstname,lastname, email, password, registration_date, avatar) VALUES ('${req.firstname}','${req.lastname}', '${req.email}', '${req.password}', '${req.registration_date}', '')`
       )
       return true
     } catch (error) {
@@ -314,7 +314,7 @@ module.exports = class DBRequests {
   }
 
   async change_settings(user) {
-    let query = `UPDATE users SET name='${user.name}', surname='${user.surname}', email='${user.email}'`
+    let query = `UPDATE users SET firstname='${user.firstname}', lastname='${user.lastname}', email='${user.email}'`
     if (user.avatar != '') {
       query += `, avatar='${user.avatar}'`
     }
@@ -338,21 +338,11 @@ module.exports = class DBRequests {
       console.log(error)
     }
   }
-  async set_reset_password(data) {
+  async reset_password(user) {
     try {
-      let row = null
-      const [res] = await connection.execute(
-        `SELECT * FROM reset_password WHERE user_id='${data.id}'`
-      ) 
-      if (res.length) {
-        row = await connection.execute(
-          `UPDATE reset_password SET email='${data.email}', password='${data.password}', token='${data.token}', user_id='${data.id}'`
-        )
-      } else {
-        row = await connection.execute(
-          `INSERT INTO reset_password (email, password, token, user_id) VALUES ('${data.email}', '${data.password}', '${data.token}', '${data.id}')`
-        )
-      }
+      const [row] = await connection.execute(
+        `UPDATE users SET password='${user.password}' WHERE email='${user.email}'`
+      )
       return row
     } catch (error) {
       console.log(error)
@@ -367,4 +357,39 @@ module.exports = class DBRequests {
       console.log(error)
     }
   }
+
+  async add_verify_code(data) {
+    const email = mysql.escape(data.email)
+    try {
+      const [rows] = await connection.execute(`SELECT * FROM verify_code WHERE email = ${email}`)
+      if (rows.length) {
+        const [row] = await connection.execute(`UPDATE verify_code SET email='${data.email}', code='${data.code}', exp='${data.exp}'`)
+
+      } else {
+        const [row] = await connection.execute(`INSERT INTO verify_code(email,code,exp) VALUES ("${data.email}","${data.code}","${data.exp}")`)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async verify_code(data) {
+    try {
+     const [row] = await connection.execute(`SELECT * FROM verify_code WHERE code = '${data}'`)
+     return row
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async change_status_verify(data) {
+    const email = mysql.escape(data.email)
+    try {
+     const [row] = await connection.execute(`UPDATE users SET verify='1' WHERE email=${email}`)
+     return row
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
 }

@@ -8,7 +8,7 @@ module.exports = async function verifyKey(params) {
     if (err) {
       return { statusCode: 404, status: false, message: 'Token expired' }
     } else {
-      return { statusCode: 200, status: true, message: 'Token', decodedToken: decoded.data, token }
+      return { statusCode: 200, status: true, message: 'Token', decodedToken: decoded, token }
     }
   });
 }
