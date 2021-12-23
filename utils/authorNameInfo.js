@@ -16,9 +16,14 @@ module.exports = async (posts, type) => {
       for (let j = 0; j < users.length; j++) {
         const user = users[j];
         if (post.user_id == user.id) {
-          post.name = user.name;
-          post.surname = user.surname;
-          post.avatar = user.avatar;
+          post.author = {
+            firstname: user.firstname,
+            lastname: user.lastname,
+            avatar: user.avatar
+          }
+          // post.name = user.firstname;
+          // post.surname = user.lastname;
+          // post.avatar = user.avatar;
           arr.push(post);
         }
       }
@@ -29,9 +34,15 @@ module.exports = async (posts, type) => {
     for (let i = 0; i < users.length; i++) {
       const user = users[i];
       if (user.id == posts.user_id) {
-        posts.name = user.name;
-        posts.surname = user.surname;
-        posts.avatar = user.avatar;
+        posts.author = {
+          firstname: user.firstname,
+          lastname: user.lastname,
+          avatar: user.avatar
+        }
+        
+        // posts.name = user.name;
+        // posts.surname = user.surname;
+        // posts.avatar = user.avatar;
         arr.push(posts);
         break;
       }

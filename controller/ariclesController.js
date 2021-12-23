@@ -53,13 +53,14 @@ module.exports.getPost = async (req, res) => {
   try {
     const con = new DBRequests()
     const row = await con.getPost(req.params.id)
-    
     const post = await authorNameInfo(...row, 'Object')
+
     if (post[0].likes_count >= 0) {
       post[0].likes_count = { count: post[0].likes_count, inc: true }
     } else {
       post[0].likes_count = { count: post[0].likes_count, dec: true }
     }
+    
     res.json(post)
   } catch (error) {
     res.status(500).json({ message: 'Something went wrong, please try again' })
