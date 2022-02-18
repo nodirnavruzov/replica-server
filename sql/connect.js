@@ -1,20 +1,18 @@
+const sqlConfig = ('../config/sql.config.js') 
+
 function createPool() {
   try {
     const mysql = require('mysql2');
-
     const pool = mysql.createPool({
-      host: "127.0.0.1",
-      user: "root",
-      password: "root",
-      database: "blog",
-      connectionLimit: 10,
+      host: sqlConfig.HOST,
+      user: sqlConfig.USER,
+      password: sqlConfig.PASSWORD,
+      database: sqlConfig.DB,
+      connectionLimit: sqlConfig.connectionLimit,
       waitForConnections: true,
       queueLimit: 0
     });
-
-    const promisePool = pool.promise();
-
-    return promisePool;
+    return pool.promise();
   } catch (error) {
     return console.log(`Could not connect - ${error}`);
   }

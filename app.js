@@ -8,9 +8,6 @@ var indexRouter = require("./routes");
 var app = express();
 var cors = require("cors");
 
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "pug");
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -30,6 +27,7 @@ app.use(function (req, res, next) {
 });
 
 // error handler
+// need refactor
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
