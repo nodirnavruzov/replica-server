@@ -124,6 +124,7 @@ module.exports.sendResetPassword = async (req, res) => {
     await sendEmail.reset(req.body)
     return res.status(200).json({message: 'Email send'})
   } catch (error) {
+    res.status(500).json({ message: 'Something went wrong, please try again' })
     console.log('error', error)
   }
 }
@@ -139,6 +140,7 @@ module.exports.checkResetToken = async (req, res) => {
     }
   } catch (error) {
     console.log('error', error)
+    res.status(500).json({ message: 'Something went wrong, please try again' })
   }
 }
 module.exports.resetPassword = async (req, res) => {
@@ -152,6 +154,7 @@ module.exports.resetPassword = async (req, res) => {
     })
     return res.status(200).json({status: true, message: 'Password changed'})
   } catch (error) {
+    res.status(500).json({ message: 'Something went wrong, please try again' })
     console.log('error', error)
   }
 }
