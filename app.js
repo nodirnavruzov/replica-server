@@ -21,6 +21,10 @@ app.use(cors());
 
 app.use("/api", indexRouter);
 
+app.use('/', (req, res) => {
+  res.json({message: 'Have you lost anything?'})
+})
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

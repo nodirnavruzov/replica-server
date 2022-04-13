@@ -14,7 +14,7 @@ module.exports = class DBRequests {
       )
       return true
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -23,7 +23,7 @@ module.exports = class DBRequests {
       const [rows] = await connection.execute(`SELECT *  FROM users WHERE email = '${userEmail}'`)
       return rows
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -32,7 +32,7 @@ module.exports = class DBRequests {
       const [users] = await connection.execute(`SELECT *  FROM users WHERE id = '${id}'`)
       return users
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -41,7 +41,7 @@ module.exports = class DBRequests {
       const [users] = await connection.execute(`SELECT *  FROM users`)
       return users
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -54,7 +54,7 @@ module.exports = class DBRequests {
         return { status: true }
       }
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -63,7 +63,7 @@ module.exports = class DBRequests {
       const [rows] = await connection.execute('SELECT * FROM posts  order by date DESC')
       return rows
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -72,10 +72,9 @@ module.exports = class DBRequests {
       const [rows] = await connection.execute(
         "SELECT * FROM posts WHERE category = 'News' order by original_date DESC"
       )
-
       return rows
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -86,7 +85,7 @@ module.exports = class DBRequests {
 
       return rows
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -99,7 +98,7 @@ module.exports = class DBRequests {
       )
       return rows
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -136,7 +135,7 @@ module.exports = class DBRequests {
       )
       return status
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -148,7 +147,7 @@ module.exports = class DBRequests {
       await connection.execute(`UPDATE posts SET views=${views} WHERE id = '${id}'`)
       return rows
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -159,14 +158,14 @@ module.exports = class DBRequests {
       )
       return posts
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
   async update_post_count(count, body) {
     try {
       await connection.execute(`UPDATE users SET post_count=${count} WHERE id=${body.user_id}`)
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -175,7 +174,7 @@ module.exports = class DBRequests {
       const [user] = await connection.execute(`SELECT * FROM users WHERE id = '${id}'`)
       return user
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -190,7 +189,7 @@ module.exports = class DBRequests {
 
       return posts
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -223,7 +222,7 @@ module.exports = class DBRequests {
       SELECT * FROM saved_posts WHERE post_id = '${ides.post_id}' && user_id = '${ides.user_id}'`)
       return status
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
   async content_like(body) {
@@ -261,7 +260,7 @@ module.exports = class DBRequests {
           UPDATE posts SET likes_count=likes_count + ${step} WHERE id = '${body.post_id}'
             `)
     } catch (error) {
-      console.log(error)
+      return error
     }
     return ex_result
   }
@@ -272,7 +271,7 @@ module.exports = class DBRequests {
     try {
       ;[likes] = await connection.execute(`SELECT likes_count FROM posts WHERE id = ${query.post_id}`)
     } catch (error) {
-      console.log(error)
+      return error
     }
     return likes
   }
@@ -284,7 +283,7 @@ module.exports = class DBRequests {
       )
       return row
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -300,7 +299,7 @@ module.exports = class DBRequests {
         return false
       }
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -309,7 +308,7 @@ module.exports = class DBRequests {
       const [row] = await connection.execute(`UPDATE users SET avatar='' WHERE id=${id}`)
       return row
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -323,7 +322,7 @@ module.exports = class DBRequests {
       const [res] = await connection.execute(query)
       return res
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -335,7 +334,7 @@ module.exports = class DBRequests {
       )
       return row
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
   async reset_password(user) {
@@ -345,7 +344,7 @@ module.exports = class DBRequests {
       )
       return row
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -354,7 +353,7 @@ module.exports = class DBRequests {
       const [password] = await connection.execute(`SELECT password FROM users WHERE id = ${user_id}`)
       return password
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -369,7 +368,7 @@ module.exports = class DBRequests {
         const [row] = await connection.execute(`INSERT INTO verify_code(email,code,exp) VALUES ("${data.email}","${data.code}","${data.exp}")`)
       }
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -378,7 +377,7 @@ module.exports = class DBRequests {
      const [row] = await connection.execute(`SELECT * FROM verify_code WHERE code = '${data}'`)
      return row
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 
@@ -388,7 +387,7 @@ module.exports = class DBRequests {
      const [row] = await connection.execute(`UPDATE users SET verify='1' WHERE email=${email}`)
      return row
     } catch (error) {
-      console.log(error)
+      return error
     }
   }
 

@@ -1,4 +1,4 @@
-const sqlConfig = ('../config/sql.config.js') 
+const sqlConfig = require('../config/sql.config.js') 
 
 function createPool() {
   try {

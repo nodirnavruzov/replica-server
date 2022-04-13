@@ -7,9 +7,7 @@ module.exports = async (posts, type) => {
   try {
     const connection = new DBRequests()
     users = await connection.getUsers();
-  } catch (error) {
-    console.log(error);
-  }
+ 
   if (type == "Array") {
     for (let i = 0; i < posts.length; i++) {
       const post = posts[i];
@@ -52,5 +50,8 @@ module.exports = async (posts, type) => {
     return new Error(
       "Missed required argument. Please indicate as second TYPE of argument"
     );
+  }
+  } catch (error) {
+    return error;
   }
 };

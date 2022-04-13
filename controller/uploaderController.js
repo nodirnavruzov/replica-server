@@ -1,9 +1,10 @@
+const config = require('../config/default.json')
 module.exports.uploader = async (req, res) => {
   try {
     res.json({
       success: 1,
       file: {
-        url: "http://localhost:3000/" + req.file.filename,
+        url: `${config.baseUrl}:${config.port}/${req.file.filename}`,
       },
     });
   } catch (error) {

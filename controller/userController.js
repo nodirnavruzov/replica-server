@@ -1,6 +1,6 @@
 const DBRequests = require('../sql')
 const bcrypt = require('bcryptjs')
-
+const config = require('../config/default.json')
 
 module.exports.getUser = async (req, res) => {
   try {
@@ -56,7 +56,7 @@ module.exports.comparePassword = async (req, res) => {
 
 module.exports.uploadAvatar = async (req, res) => {
   try {
-    const url = `http://localhost:3000/${req.file.filename}`
+    const url = `${config.baseUrl}:${config.port}/${req.file.filename}`
     res.status(200).json({
       url
     })
@@ -86,7 +86,7 @@ module.exports.changeSettings = async (req, res) => {
     const isMatch = await bcrypt.compare(req.body.userForm.current_password, password[0].password)
     if (isMatch) {
       if (req.body.userForm.avatar == '') {
-        req.body.userForm.avatar = 'http://localhost:3000/avatar'
+        req.body.userForm.avatar = `${config.baseUrl}:${config.port}/avatar`
       }
       response = await con.change_settings(req.body.userForm)
       res.status(200).json({ status: true, message: 'Settings changed' })

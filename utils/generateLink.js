@@ -4,8 +4,9 @@ const config = require("../config/default.json");
 //* NEED REFACTOR
 module.exports = async (email) => {
   const token = jwt.sign({ email }, config.jwtSecret, {
-    expiresIn: '2h'
+    expiresIn: '8h'
   })
-  const link = `http://192.168.43.92:8080/reset-password/${token}`
+  const link = `${config.baseUrl}:${config.fontendPort}/reset-password/${token}`
+  console.log('link', link)
   return link
 }

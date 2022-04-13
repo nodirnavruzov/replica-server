@@ -14,8 +14,13 @@ module.exports.register = async (req, res) => {
   try {
     const con = new DBRequests()
     const { email, password } = req.body
-    const verifyData = await sendEmail.verify(email)
-    await con.add_verify_code(verifyData)
+    sendEmail.verify(email, async (err, mess) => {
+      if(!err) {
+        await con.add_verify_code(mess)
+      } else {
+        throw new Error(err)
+      }
+    })
     const dateNow = moment().format('DD-MM-YYYY HH:mm:ss')
     const result = await con.checkUserEmail(email)
     if (!result.status) {
@@ -44,7 +49,7 @@ module.exports.verifyCode = async (req, res) => {
     const con = new DBRequests()
     const [verify] = await con.verify_code(code)
     if (verify) {
-      const result = await con.change_status_verify(verify)
+      await con.change_status_verify(verify)
       res.status(201).json({status: true, message: 'Verify completed successfully' })
     } else {
       res.status(500).json({ message: 'code expired or wrong' })
@@ -59,8 +64,13 @@ module.exports.sendVerifyEmail = async (req, res) => {
   try {
     const con = new DBRequests()
     const { email } = req.body
-    const verifyData = await sendEmail.verify(email)
-    await con.add_verify_code(verifyData)
+    sendEmail.verify(email, async (err, mess) => {
+      if (!err) {
+        await con.add_verify_code(verifyData)
+      } else {
+        throw new Error(err.message)
+      }
+    })
     res.status(200)
   } catch (error) {
     res.status(500).json({ message: 'Something went wrong, please try again' })
@@ -121,11 +131,21 @@ module.exports.checkResetPassword = async (req, res) => {
 
 module.exports.sendResetPassword = async (req, res) => {
   try {
-    await sendEmail.reset(req.body)
-    return res.status(200).json({message: 'Email send'})
+    const con = new DBRequests()
+    const user = await con.getUsersByEmail(req.body.email)
+    if(user.length) {
+      sendEmail.reset(req.body, (err, mess) => {
+        if(!err) {
+          return res.status(200).json({message: 'Email send', status: true})
+        } else {
+          return res.status(400).json({message: 'Somethink wrong email cant send', status: false})
+        }
+      })
+    } else {  
+      return res.status(200).json({message: 'user with this email is not registered', status: false})
+    }
   } catch (error) {
     res.status(500).json({ message: 'Something went wrong, please try again' })
-    console.log('error', error)
   }
 }
 
@@ -139,7 +159,6 @@ module.exports.checkResetToken = async (req, res) => {
       return res.status(200).json({ message: result.message })
     }
   } catch (error) {
-    console.log('error', error)
     res.status(500).json({ message: 'Something went wrong, please try again' })
   }
 }
@@ -155,6 +174,5 @@ module.exports.resetPassword = async (req, res) => {
     return res.status(200).json({status: true, message: 'Password changed'})
   } catch (error) {
     res.status(500).json({ message: 'Something went wrong, please try again' })
-    console.log('error', error)
   }
 }
